@@ -1,0 +1,22 @@
+{
+  "name": "yt-dw",
+  "version": "1.0.0",
+  "description": "0.0.1",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/likefurnis/yt-dw.git"
+  },
+  "author": "gummie",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/likefurnis/yt-dw/issues"
+  },
+  "homepage": "https://github.com/likefurnis/yt-dw#readme",
+  "dependencies": {
+    "ytdl-core": "^4.4.3"
+  }
+}
