@@ -2,9 +2,10 @@
   "name": "yt-dw",
   "version": "1.0.0",
   "description": "0.0.1",
-  "main": "main.js",
+  "private": true,
   "scripts": {
-    "start": "tsc && browserify dist/main.js > extension/bundle.js"
+    "start": "tsc && browserify dist/main.js > extension/bundle.js",
+    "bundle": "browserify main.js > extension/bundle.js"
   },
   "repository": {
     "type": "git",

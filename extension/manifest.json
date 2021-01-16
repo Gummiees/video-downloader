@@ -1,10 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Youtube DL",
-  "description": "You know what this is",
+  "name": "YouTube DL",
+  "description": "Download videos from YouTube",
   "version": "0.0.1",
-  "browser_action": {
-    "default_popup": "popup.html"
-  },
-  "permissions": ["tabs", "downloads"]
+  "browser_action": {"default_popup": "popup.html"},
+  "permissions": ["downloads", "<all_urls>"],
+  "background": {"page": "background.html"}
 }
