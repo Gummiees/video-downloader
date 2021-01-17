@@ -9,6 +9,7 @@ This extensions allows you to download videos.
 3. Click `Load Unpacked Extension`
 4. Navigate to the local folder where you downloaded this project
 5. Click `Select folder`
+
 You're now good to go 🎉
 
 ## How to use
