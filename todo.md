@@ -1,3 +1,3 @@
-1. Descargar mp4 no tiene audio
-2. Mostrar cargando si es desde extension
-3. convertir titulo a utf-8
+1. Descargar desde tiktok
+2. Descargar desde tumblr
+3. Descargar desde twitter

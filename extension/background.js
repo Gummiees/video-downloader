@@ -8802,13 +8802,16 @@ var FileType;
 var MIMEType;
 (function (MIMEType) {
     MIMEType["mp3"] = "audio/*";
-    MIMEType["mp4"] = "video/mp4";
+    MIMEType["mp4"] = "video/*";
 })(MIMEType || (MIMEType = {}));
 var YoutubeQuality;
 (function (YoutubeQuality) {
-    YoutubeQuality["highestvideo"] = "highestvideo";
+    YoutubeQuality["highestvideo"] = "highest";
     YoutubeQuality["highestaudio"] = "highestaudio";
 })(YoutubeQuality || (YoutubeQuality = {}));
+function convertToValidFilename(string) {
+    return (string.replace(/[\/|\\:*?"<>]/g, " "));
+}
 function getFileType(action) {
     switch (action) {
         case ActionType.youtubeMp3:
@@ -8865,7 +8868,8 @@ function downloadFromYoutube(url, action) {
         const formatOptions = { quality: quality };
         const stream = ytdl_core_1.default.downloadFromInfo(info, formatOptions);
         const blobUrl = yield downloadBlob(stream, getMIMEType(action));
-        const fileName = `${info.videoDetails.title}.${getFileType(action)}`;
+        let fileName = `${info.videoDetails.title}.${getFileType(action)}`;
+        fileName = convertToValidFilename(fileName);
         return [blobUrl, fileName];
     });
 }
@@ -8884,6 +8888,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 throw 'The URL is not a valid YouTube URL.';
             }
             downloadFromYoutube(url, request.action).then((values) => {
+                console.log(values[1]);
                 chrome.downloads.download({ url: values[0], filename: values[1], saveAs: true }, (downloadedItem) => sendResponse({ success: 'yay!' }));
             });
             return true;

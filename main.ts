@@ -14,12 +14,16 @@ enum FileType {
 
 enum MIMEType {
   mp3 = 'audio/*',
-  mp4 = 'video/mp4'
+  mp4 = 'video/*'
 }
 
 enum YoutubeQuality {
-  highestvideo = 'highestvideo',
+  highestvideo = 'highest',
   highestaudio = 'highestaudio'
+}
+
+function convertToValidFilename(string: string): string {
+  return (string.replace(/[\/|\\:*?"<>]/g, " "));
 }
 
 function getFileType(action: ActionType): FileType {
@@ -83,7 +87,8 @@ async function downloadFromYoutube(url: string, action: ActionType): Promise<[st
   const stream: Readable = ytdl.downloadFromInfo(info, formatOptions);
   const blobUrl: string = await downloadBlob(stream, getMIMEType(action));
 
-  const fileName: string = `${info.videoDetails.title}.${getFileType(action)}`;
+  let fileName: string = `${info.videoDetails.title}.${getFileType(action)}`;
+  fileName = convertToValidFilename(fileName);
   return [blobUrl, fileName];
 }
 
@@ -105,6 +110,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
   
       downloadFromYoutube(url, request.action).then((values) => {
+        console.log(values[1]);
         chrome.downloads.download({ url: values[0], filename: values[1], saveAs: true }, (downloadedItem: number) => sendResponse({ success: 'yay!' }));
       });
       return true;

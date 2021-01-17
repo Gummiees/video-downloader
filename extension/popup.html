@@ -12,7 +12,12 @@
   <body>
     <div class="body-container">
         <input type="text" id="url-yt-dw" name="url-yt-dw" class="form-control" placeholder="Video URL" aria-label="Video URL" />
-        <div class="buttons-container">
+        <div id="loading-dw-yt" class="spinner-container" hidden>
+          <div class="spinner-border text-secondary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <div id="buttons-container" class="buttons-container">
           <button type="button" id="dw-yt-mp4" class="btn btn-danger">MP4</button>
           <button type="button" id="dw-yt-mp3" class="btn btn-primary">MP3</button>
         </div>
