@@ -38,8 +38,9 @@ You can print console.logs from both `app.js` and `main.ts`. The ones from `app.
 3. Click on `inspect views background.html`
 
 ## TODO
-1. Download videos from Tumblr
-2. Download videos from Twitter
-3. Download videos from TikTok
-4. Create tests
-5. Create a GitHub worflow with CodeQL Analysis
+- Download videos from Tumblr
+- Download videos from Twitter
+- Download videos from TikTok
+- Create tests
+- Create a GitHub worflow with CodeQL Analysis
+- Improve YouTube MP4 quality
