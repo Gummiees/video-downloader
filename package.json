@@ -1,5 +1,5 @@
 {
-  "name": "yt-dw",
+  "name": "video-downloader",
   "version": "1.0.0",
   "description": "Video downloader, both to MP3 and MP4",
   "private": true,
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/likefurnis/yt-dw.git"
+    "url": "git+https://github.com/likefurnis/video-downloader.git"
   },
-  "author": "gummie",
+  "author": "Gummie",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/likefurnis/yt-dw/issues"
+    "url": "https://github.com/likefurnis/video-downloader/issues"
   },
-  "homepage": "https://github.com/likefurnis/yt-dw#readme",
+  "homepage": "https://github.com/likefurnis/video-downloader#readme",
   "dependencies": {
     "ytdl-core": "^4.4.3"
   },
