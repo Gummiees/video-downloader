@@ -1,6 +1,5 @@
 # video-downloader
-## Description
-This extensions allows you to download videos.
+This extension allows you to download videos.
 
 ## How to install
 1. [Download the latest version of this project](https://github.com/likefurnis/yt-dw/releases/latest)
