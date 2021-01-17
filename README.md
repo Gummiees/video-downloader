@@ -3,7 +3,7 @@
 This extensions allows you to download videos.
 
 ## How to install
-1. Download the release version of this project
+1. [Download the latest version of this project](https://github.com/likefurnis/yt-dw/releases/latest)
 1. Navigate to `chrome://extensions/`
 2. Allow `developer mode`
 3. Click `Load Unpacked Extension`
