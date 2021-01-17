@@ -1,7 +1,7 @@
 {
   "name": "yt-dw",
   "version": "1.0.0",
-  "description": "0.0.1",
+  "description": "Video downloader, both to MP3 and MP4",
   "private": true,
   "scripts": {
     "start": "tsc && browserify dist/main.js > extension/background.js",
