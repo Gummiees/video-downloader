@@ -12,6 +12,12 @@ This extensions allows you to download videos.
 
 You're now good to go 🎉
 
+## I found a bug
+[Create a new bug issue!](https://github.com/likefurnis/video-downloader/issues/new)
+
+## I have a new idea
+[Create a new discussion!](https://github.com/likefurnis/video-downloader/discussions/categories/ideas)
+
 ## How to use
 For now, you can only download videos from YouTube either with MP3 format or MP4. It will download the best quality it can.
 You can do so both from the extension icon or from the injected buttons on YouTube under the video title.
