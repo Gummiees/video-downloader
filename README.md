@@ -1,4 +1,7 @@
 # video-downloader
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9923df2fb5e94925b495df1d108aa290)](https://app.codacy.com/gh/likefurnis/video-downloader?utm_source=github.com&utm_medium=referral&utm_content=likefurnis/video-downloader&utm_campaign=Badge_Grade)
+
 This extension allows you to download videos.
 
 ## How to install
