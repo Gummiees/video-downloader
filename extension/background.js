@@ -8775,6 +8775,56 @@ function extend() {
 
 },{}],55:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const stream_to_blob_1 = __importDefault(require("stream-to-blob"));
+const ytdl_core_1 = __importDefault(require("ytdl-core"));
+function downloadBlob(blob) {
+    const blobUrl = URL.createObjectURL(blob);
+    return blobUrl;
+}
+function validateUrl(url) {
+    return ytdl_core_1.default.validateURL(url) && ytdl_core_1.default.validateID(ytdl_core_1.default.getURLVideoID(url));
+}
+function downloadFromYoutube(url) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!validateUrl(url)) {
+            throw 'That is not youtube URL.';
+        }
+        const info = yield ytdl_core_1.default.getInfo(url);
+        const formatOptions = { quality: 'highestvideo' };
+        const stream = ytdl_core_1.default.downloadFromInfo(info, formatOptions);
+        const blob = yield stream_to_blob_1.default(stream, 'video/mp4');
+        const fileName = `${info.videoDetails.title}.mp4`;
+        return [downloadBlob(blob), fileName];
+    });
+}
+chrome.runtime.onMessage.addListener((request) => {
+    if (request.action === 'download-video') {
+        const url = request.url;
+        if (url) {
+            downloadFromYoutube(url).then((values) => {
+                console.log("values", values);
+                chrome.downloads.download({ url: values[0], filename: values[1], saveAs: true }, function (downloadItemId) {
+                });
+            });
+        }
+    }
+});
+
+},{"stream-to-blob":63,"ytdl-core":67}],56:[function(require,module,exports){
+"use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8957,7 +9007,7 @@ class DashMPDParser extends stream_1.Writable {
 }
 exports.default = DashMPDParser;
 
-},{"./parse-time":58,"sax":61,"stream":15}],56:[function(require,module,exports){
+},{"./parse-time":59,"sax":62,"stream":15}],57:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -9139,7 +9189,7 @@ let m3u8stream = ((playlistURL, options = {}) => {
 m3u8stream.parseTimestamp = parse_time_1.humanStr;
 module.exports = m3u8stream;
 
-},{"./dash-mpd-parser":55,"./m3u8-parser":57,"./parse-time":58,"./queue":59,"miniget":60,"stream":15,"url":51}],57:[function(require,module,exports){
+},{"./dash-mpd-parser":56,"./m3u8-parser":58,"./parse-time":59,"./queue":60,"miniget":61,"stream":15,"url":51}],58:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const stream_1 = require("stream");
@@ -9251,7 +9301,7 @@ class m3u8Parser extends stream_1.Writable {
 }
 exports.default = m3u8Parser;
 
-},{"stream":15}],58:[function(require,module,exports){
+},{"stream":15}],59:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.durationStr = exports.humanStr = void 0;
@@ -9305,7 +9355,7 @@ exports.durationStr = (time) => {
     return total;
 };
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Queue {
@@ -9358,7 +9408,7 @@ class Queue {
 }
 exports.default = Queue;
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 (function (process){(function (){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -9633,7 +9683,7 @@ function Miniget(url, options = {}) {
 module.exports = Miniget;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":9,"http":30,"https":6,"stream":15,"url":51}],61:[function(require,module,exports){
+},{"_process":9,"http":30,"https":6,"stream":15,"url":51}],62:[function(require,module,exports){
 (function (Buffer){(function (){
 ;(function (sax) { // wrapper for non-node envs
   sax.parser = function (strict, opt) { return new SAXParser(strict, opt) }
@@ -11202,7 +11252,7 @@ module.exports = Miniget;
 })(typeof exports === 'undefined' ? this.sax = {} : exports)
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":3,"stream":15,"string_decoder":49}],62:[function(require,module,exports){
+},{"buffer":3,"stream":15,"string_decoder":49}],63:[function(require,module,exports){
 /*! stream-to-blob. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* global Blob */
 
@@ -11226,7 +11276,7 @@ function streamToBlob (stream, mimeType) {
   })
 }
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 const { setTimeout } = require('timers');
 
 // A cache that expires.
@@ -11282,7 +11332,7 @@ module.exports = class Cache extends Map {
   }
 };
 
-},{"timers":50}],64:[function(require,module,exports){
+},{"timers":50}],65:[function(require,module,exports){
 const utils = require('./utils');
 const FORMATS = require('./formats');
 
@@ -11514,7 +11564,7 @@ exports.addFormatMeta = format => {
   return format;
 };
 
-},{"./formats":65,"./utils":71}],65:[function(require,module,exports){
+},{"./formats":66,"./utils":72}],66:[function(require,module,exports){
 /**
  * http://en.wikipedia.org/wiki/YouTube#Quality_and_formats
  */
@@ -12040,7 +12090,7 @@ module.exports = {
 
 };
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 (function (setImmediate){(function (){
 const PassThrough = require('stream').PassThrough;
 const getInfo = require('./info');
@@ -12250,7 +12300,7 @@ ytdl.downloadFromInfo = (info, options) => {
 };
 
 }).call(this)}).call(this,require("timers").setImmediate)
-},{"./format-utils":64,"./info":68,"./sig":69,"./url-utils":70,"./utils":71,"m3u8stream":56,"miniget":60,"stream":15,"timers":50}],67:[function(require,module,exports){
+},{"./format-utils":65,"./info":69,"./sig":70,"./url-utils":71,"./utils":72,"m3u8stream":57,"miniget":61,"stream":15,"timers":50}],68:[function(require,module,exports){
 const utils = require('./utils');
 const qs = require('querystring');
 const urllib = require('url');
@@ -12590,7 +12640,7 @@ exports.getStoryboards = info => {
   });
 };
 
-},{"./utils":71,"m3u8stream":56,"querystring":13,"url":51}],68:[function(require,module,exports){
+},{"./utils":72,"m3u8stream":57,"querystring":13,"url":51}],69:[function(require,module,exports){
 const urllib = require('url');
 const querystring = require('querystring');
 const sax = require('sax');
@@ -13079,7 +13129,7 @@ exports.validateURL = urlUtils.validateURL;
 exports.getURLVideoID = urlUtils.getURLVideoID;
 exports.getVideoID = urlUtils.getVideoID;
 
-},{"./cache":63,"./format-utils":64,"./info-extras":67,"./sig":69,"./url-utils":70,"./utils":71,"miniget":60,"querystring":13,"sax":61,"timers":50,"url":51}],69:[function(require,module,exports){
+},{"./cache":64,"./format-utils":65,"./info-extras":68,"./sig":70,"./url-utils":71,"./utils":72,"miniget":61,"querystring":13,"sax":62,"timers":50,"url":51}],70:[function(require,module,exports){
 const url = require('url');
 const miniget = require('miniget');
 const querystring = require('querystring');
@@ -13333,7 +13383,7 @@ exports.decipherFormats = async(formats, html5player, options) => {
   return decipheredFormats;
 };
 
-},{"./cache":63,"miniget":60,"querystring":13,"url":51}],70:[function(require,module,exports){
+},{"./cache":64,"miniget":61,"querystring":13,"url":51}],71:[function(require,module,exports){
 const url = require('url');
 
 
@@ -13426,7 +13476,7 @@ exports.validateURL = string => {
   }
 };
 
-},{"url":51}],71:[function(require,module,exports){
+},{"url":51}],72:[function(require,module,exports){
 (function (process){(function (){
 const miniget = require('miniget');
 
@@ -13592,35 +13642,30 @@ exports.checkForUpdates = () => {
 };
 
 }).call(this)}).call(this,require('_process'))
-},{"../package.json":72,"_process":9,"miniget":60}],72:[function(require,module,exports){
+},{"../package.json":73,"_process":9,"miniget":61}],73:[function(require,module,exports){
 module.exports={
-  "_args": [
-    [
-      "ytdl-core@4.4.3",
-      "C:\\Users\\reiva\\Documents\\Coding\\yt-dw"
-    ]
-  ],
-  "_from": "ytdl-core@4.4.3",
+  "_from": "ytdl-core@^4.4.3",
   "_id": "ytdl-core@4.4.3",
   "_inBundle": false,
   "_integrity": "sha512-0GexY2dMk0pvIE0UAB5GPiyaNjiawqDi5eUCUHW7CP1ZNyEco8Lct8/3AsI6aO0EQLGK774ocDvWxOE7W0qrTg==",
   "_location": "/ytdl-core",
   "_phantomChildren": {},
   "_requested": {
-    "type": "version",
+    "type": "range",
     "registry": true,
-    "raw": "ytdl-core@4.4.3",
+    "raw": "ytdl-core@^4.4.3",
     "name": "ytdl-core",
     "escapedName": "ytdl-core",
-    "rawSpec": "4.4.3",
+    "rawSpec": "^4.4.3",
     "saveSpec": null,
-    "fetchSpec": "4.4.3"
+    "fetchSpec": "^4.4.3"
   },
   "_requiredBy": [
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/ytdl-core/-/ytdl-core-4.4.3.tgz",
-  "_spec": "4.4.3",
+  "_shasum": "d968bbb1d6c7f2d0ed477715e849c53ccd3f0d85",
+  "_spec": "ytdl-core@^4.4.3",
   "_where": "C:\\Users\\reiva\\Documents\\Coding\\yt-dw",
   "author": {
     "name": "fent",
@@ -13630,6 +13675,7 @@ module.exports={
   "bugs": {
     "url": "https://github.com/fent/node-ytdl-core/issues"
   },
+  "bundleDependencies": false,
   "contributors": [
     {
       "name": "Tobias Kutscha",
@@ -13657,6 +13703,7 @@ module.exports={
     "miniget": "^4.0.0",
     "sax": "^1.1.3"
   },
+  "deprecated": false,
   "description": "YouTube video downloader in pure javascript.",
   "devDependencies": {
     "@types/node": "^13.1.0",
@@ -13704,56 +13751,4 @@ module.exports={
   "version": "4.4.3"
 }
 
-},{}],73:[function(require,module,exports){
-
-const ytdl = require('ytdl-core');
-const streamToBlob = require('stream-to-blob');
-
-function downloadBlob(blob) {
-  const blobUrl = URL.createObjectURL(blob);
-  return blobUrl;
-  // const link: HTMLAnchorElement = document.createElement('a');
-  // link.href = blobUrl;
-  // link.download = name;
-  // document.body.appendChild(link);
-  // link.dispatchEvent(
-  //   new MouseEvent('click', {
-  //     bubbles: true,
-  //     cancelable: true,
-  //     view: window,
-  //   })
-  // );
-  // document.body.removeChild(link);
-}
-
-function validateUrl(url) {
-  return ytdl.validateURL(url) && ytdl.validateID(ytdl.getURLVideoID(url));
-}
-
-async function downloadFromYoutube(url) {
-  if (!validateUrl(url)) {
-    throw 'That is not youtube URL.';
-  }
-
-  const info = await ytdl.getInfo(url);
-  const formatOptions = { quality: 'highestvideo' };
-  const stream = ytdl.downloadFromInfo(info, formatOptions); /*.pipe(fs.createWriteStream(videoName))*/
-  const blob = await streamToBlob(stream, 'video/mp4');
-  const fileName = `${info.videoDetails.title}.mp4`;
-  return [downloadBlob(blob), fileName];
-}
-
-chrome.extension.onMessage.addListener((request) => {
-  if (request.action === 'download-video') {
-    const url = request.url;
-    if (url) {
-      downloadFromYoutube(url).then((values) => {
-        console.log("values", values);
-        chrome.downloads.download({ url: values[0], filename: values[1], saveAs: true }, function (downloadItemId) {
-        });
-      });
-    }
-  }
-});
-
-},{"stream-to-blob":62,"ytdl-core":66}]},{},[73]);
+},{}]},{},[55]);

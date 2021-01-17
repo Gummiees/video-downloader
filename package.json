@@ -4,8 +4,8 @@
   "description": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "tsc && browserify dist/main.js > extension/bundle.js",
-    "bundle": "browserify src/main.js > extension/bundle.js"
+    "start": "tsc && browserify dist/main.js > extension/background.js",
+    "bundle": "browserify src/main.js > extension/background.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,9 @@
   "dependencies": {
     "stream-to-blob": "^2.0.1",
     "ytdl-core": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.21",
+    "@types/chrome": "0.0.128"
   }
 }
