@@ -1,4 +1,4 @@
-# yt-dw
+# video-downloader
 ## Description
 This extensions allows you to download videos.
 
