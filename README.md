@@ -41,3 +41,5 @@ You can print console.logs from both `app.js` and `main.ts`. The ones from `app.
 1. Download videos from Tumblr
 2. Download videos from Twitter
 3. Download videos from TikTok
+4. Create tests
+5. Create a GitHub worflow with CodeQL Analysis
