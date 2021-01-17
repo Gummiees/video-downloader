@@ -1,0 +1,18 @@
+.body-container {
+    margin: 10px;
+    min-width: 500px;
+}
+.buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.buttons-container > #dw-yt-mp4 {
+    margin-right: 10px;
+}
+
+.alert-container {
+    margin-top: 10px;
+}

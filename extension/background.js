@@ -8789,50 +8789,108 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
-function downloadBlob(reader) {
+var ActionType;
+(function (ActionType) {
+    ActionType["youtubeMp3"] = "yt-mp3";
+    ActionType["youtubeMp4"] = "yt-mp4";
+})(ActionType || (ActionType = {}));
+var FileType;
+(function (FileType) {
+    FileType["mp3"] = "mp3";
+    FileType["mp4"] = "mp4";
+})(FileType || (FileType = {}));
+var MIMEType;
+(function (MIMEType) {
+    MIMEType["mp3"] = "audio/*";
+    MIMEType["mp4"] = "video/mp4";
+})(MIMEType || (MIMEType = {}));
+var YoutubeQuality;
+(function (YoutubeQuality) {
+    YoutubeQuality["highestvideo"] = "highestvideo";
+    YoutubeQuality["highestaudio"] = "highestaudio";
+})(YoutubeQuality || (YoutubeQuality = {}));
+function getFileType(action) {
+    switch (action) {
+        case ActionType.youtubeMp3:
+            return FileType.mp3;
+        case ActionType.youtubeMp4:
+            return FileType.mp4;
+        default:
+            throw `There is no file type for the action '${action}'.`;
+    }
+}
+function getMIMEType(action) {
+    switch (action) {
+        case ActionType.youtubeMp3:
+            return MIMEType.mp3;
+        case ActionType.youtubeMp4:
+            return MIMEType.mp4;
+        default:
+            throw `There is no MIME type for the action '${action}'.`;
+    }
+}
+function downloadBlob(reader, type) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
             const chunks = [];
             reader.on('data', (chunk) => chunks.push(chunk))
                 .once('end', () => {
-                const blob = new Blob(chunks, { type: 'video/mp4' });
+                const blob = new Blob(chunks, { type: type });
                 const blobUrl = URL.createObjectURL(blob);
-                console.log('blob url', blobUrl);
                 resolve(blobUrl);
             })
-                .once('error', (err) => {
-                console.error('error', err);
-                reject();
-            });
+                .once('error', (err) => reject(err));
         });
     });
 }
 function validateUrl(url) {
     return ytdl_core_1.default.validateURL(url) && ytdl_core_1.default.validateID(ytdl_core_1.default.getURLVideoID(url));
 }
-function downloadFromYoutube(url) {
+function getYoutubeQuality(action) {
+    if (!isYoutubeAction(action)) {
+        throw 'The action is not a YouTube action.';
+    }
+    return action === ActionType.youtubeMp3 ? YoutubeQuality.highestaudio : YoutubeQuality.highestvideo;
+}
+function downloadFromYoutube(url, action) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!isYoutubeAction(action)) {
+            throw 'The action required is not a YouTube action.';
+        }
         if (!validateUrl(url)) {
-            throw 'That is not youtube URL.';
+            throw 'The URL is not a valid YouTube URL.';
         }
         const info = yield ytdl_core_1.default.getInfo(url);
-        const formatOptions = { quality: 'highestvideo' };
+        const quality = getYoutubeQuality(action);
+        const formatOptions = { quality: quality };
         const stream = ytdl_core_1.default.downloadFromInfo(info, formatOptions);
-        const fileName = `${info.videoDetails.title}.mp4`;
-        const blobUrl = yield downloadBlob(stream);
+        const blobUrl = yield downloadBlob(stream, getMIMEType(action));
+        const fileName = `${info.videoDetails.title}.${getFileType(action)}`;
         return [blobUrl, fileName];
     });
 }
-chrome.runtime.onMessage.addListener((request) => {
-    if (request.action === 'download-video') {
-        const url = request.url;
-        if (url) {
-            downloadFromYoutube(url).then((values) => {
-                console.log("values", values);
-                chrome.downloads.download({ url: values[0], filename: values[1], saveAs: true }, function (downloadItemId) {
-                });
+function isYoutubeAction(action) {
+    return action === ActionType.youtubeMp3 || action === ActionType.youtubeMp4;
+}
+// Listen for app.js (popup.html) events
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    try {
+        if (request.action && request.url) {
+            if (!isYoutubeAction(request.action)) {
+                throw 'The action required is not a YouTube action.';
+            }
+            const url = request.url;
+            if (!validateUrl(url)) {
+                throw 'The URL is not a valid YouTube URL.';
+            }
+            downloadFromYoutube(url, request.action).then((values) => {
+                chrome.downloads.download({ url: values[0], filename: values[1], saveAs: true }, (downloadedItem) => sendResponse({ success: 'yay!' }));
             });
+            return true;
         }
+    }
+    catch (e) {
+        sendResponse({ error: e });
     }
 });
 

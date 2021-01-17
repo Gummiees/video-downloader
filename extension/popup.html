@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Tasty</title>
+    <link rel="stylesheet" href="app.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="app.js"></script>
-    <link rel="stylesheet" href="css/app.css" />
   </head>
   <body>
-    <img src="imgs/tasty.svg" class="logo" />
-    <div class="download-interface hidden">
-      <input type="text" id="url-yt-dw" name="url-yt-dw" />
-      <button id="dw-yt">Download</button>
+    <div class="body-container">
+        <input type="text" id="url-yt-dw" name="url-yt-dw" class="form-control" placeholder="Video URL" aria-label="Video URL" />
+        <div class="buttons-container">
+          <button type="button" id="dw-yt-mp4" class="btn btn-danger">MP4</button>
+          <button type="button" id="dw-yt-mp3" class="btn btn-primary">MP3</button>
+        </div>
+      <div class="alert-container" id="alert-placeholder"></div>
     </div>
   </body>
 </html>
