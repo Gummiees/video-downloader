@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/likefurnis/yt-dw#readme",
   "dependencies": {
-    "stream-to-blob": "^2.0.1",
     "ytdl-core": "^4.4.3"
   },
   "devDependencies": {

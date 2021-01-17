@@ -8788,11 +8788,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const stream_to_blob_1 = __importDefault(require("stream-to-blob"));
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
-function downloadBlob(blob) {
-    const blobUrl = URL.createObjectURL(blob);
-    return blobUrl;
+function downloadBlob(reader) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const chunks = [];
+            reader.on('data', (chunk) => chunks.push(chunk))
+                .once('end', () => {
+                const blob = new Blob(chunks, { type: 'video/mp4' });
+                const blobUrl = URL.createObjectURL(blob);
+                console.log('blob url', blobUrl);
+                resolve(blobUrl);
+            })
+                .once('error', (err) => {
+                console.error('error', err);
+                reject();
+            });
+        });
+    });
 }
 function validateUrl(url) {
     return ytdl_core_1.default.validateURL(url) && ytdl_core_1.default.validateID(ytdl_core_1.default.getURLVideoID(url));
@@ -8805,9 +8818,9 @@ function downloadFromYoutube(url) {
         const info = yield ytdl_core_1.default.getInfo(url);
         const formatOptions = { quality: 'highestvideo' };
         const stream = ytdl_core_1.default.downloadFromInfo(info, formatOptions);
-        const blob = yield stream_to_blob_1.default(stream, 'video/mp4');
         const fileName = `${info.videoDetails.title}.mp4`;
-        return [downloadBlob(blob), fileName];
+        const blobUrl = yield downloadBlob(stream);
+        return [blobUrl, fileName];
     });
 }
 chrome.runtime.onMessage.addListener((request) => {
@@ -8823,7 +8836,7 @@ chrome.runtime.onMessage.addListener((request) => {
     }
 });
 
-},{"stream-to-blob":63,"ytdl-core":67}],56:[function(require,module,exports){
+},{"ytdl-core":66}],56:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -11253,30 +11266,6 @@ module.exports = Miniget;
 
 }).call(this)}).call(this,require("buffer").Buffer)
 },{"buffer":3,"stream":15,"string_decoder":49}],63:[function(require,module,exports){
-/*! stream-to-blob. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
-/* global Blob */
-
-module.exports = streamToBlob
-
-function streamToBlob (stream, mimeType) {
-  if (mimeType != null && typeof mimeType !== 'string') {
-    throw new Error('Invalid mimetype, expected string.')
-  }
-  return new Promise((resolve, reject) => {
-    const chunks = []
-    stream
-      .on('data', chunk => chunks.push(chunk))
-      .once('end', () => {
-        const blob = mimeType != null
-          ? new Blob(chunks, { type: mimeType })
-          : new Blob(chunks)
-        resolve(blob)
-      })
-      .once('error', reject)
-  })
-}
-
-},{}],64:[function(require,module,exports){
 const { setTimeout } = require('timers');
 
 // A cache that expires.
@@ -11332,7 +11321,7 @@ module.exports = class Cache extends Map {
   }
 };
 
-},{"timers":50}],65:[function(require,module,exports){
+},{"timers":50}],64:[function(require,module,exports){
 const utils = require('./utils');
 const FORMATS = require('./formats');
 
@@ -11564,7 +11553,7 @@ exports.addFormatMeta = format => {
   return format;
 };
 
-},{"./formats":66,"./utils":72}],66:[function(require,module,exports){
+},{"./formats":65,"./utils":71}],65:[function(require,module,exports){
 /**
  * http://en.wikipedia.org/wiki/YouTube#Quality_and_formats
  */
@@ -12090,7 +12079,7 @@ module.exports = {
 
 };
 
-},{}],67:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 (function (setImmediate){(function (){
 const PassThrough = require('stream').PassThrough;
 const getInfo = require('./info');
@@ -12300,7 +12289,7 @@ ytdl.downloadFromInfo = (info, options) => {
 };
 
 }).call(this)}).call(this,require("timers").setImmediate)
-},{"./format-utils":65,"./info":69,"./sig":70,"./url-utils":71,"./utils":72,"m3u8stream":57,"miniget":61,"stream":15,"timers":50}],68:[function(require,module,exports){
+},{"./format-utils":64,"./info":68,"./sig":69,"./url-utils":70,"./utils":71,"m3u8stream":57,"miniget":61,"stream":15,"timers":50}],67:[function(require,module,exports){
 const utils = require('./utils');
 const qs = require('querystring');
 const urllib = require('url');
@@ -12640,7 +12629,7 @@ exports.getStoryboards = info => {
   });
 };
 
-},{"./utils":72,"m3u8stream":57,"querystring":13,"url":51}],69:[function(require,module,exports){
+},{"./utils":71,"m3u8stream":57,"querystring":13,"url":51}],68:[function(require,module,exports){
 const urllib = require('url');
 const querystring = require('querystring');
 const sax = require('sax');
@@ -13129,7 +13118,7 @@ exports.validateURL = urlUtils.validateURL;
 exports.getURLVideoID = urlUtils.getURLVideoID;
 exports.getVideoID = urlUtils.getVideoID;
 
-},{"./cache":64,"./format-utils":65,"./info-extras":68,"./sig":70,"./url-utils":71,"./utils":72,"miniget":61,"querystring":13,"sax":62,"timers":50,"url":51}],70:[function(require,module,exports){
+},{"./cache":63,"./format-utils":64,"./info-extras":67,"./sig":69,"./url-utils":70,"./utils":71,"miniget":61,"querystring":13,"sax":62,"timers":50,"url":51}],69:[function(require,module,exports){
 const url = require('url');
 const miniget = require('miniget');
 const querystring = require('querystring');
@@ -13383,7 +13372,7 @@ exports.decipherFormats = async(formats, html5player, options) => {
   return decipheredFormats;
 };
 
-},{"./cache":64,"miniget":61,"querystring":13,"url":51}],71:[function(require,module,exports){
+},{"./cache":63,"miniget":61,"querystring":13,"url":51}],70:[function(require,module,exports){
 const url = require('url');
 
 
@@ -13476,7 +13465,7 @@ exports.validateURL = string => {
   }
 };
 
-},{"url":51}],72:[function(require,module,exports){
+},{"url":51}],71:[function(require,module,exports){
 (function (process){(function (){
 const miniget = require('miniget');
 
@@ -13642,7 +13631,7 @@ exports.checkForUpdates = () => {
 };
 
 }).call(this)}).call(this,require('_process'))
-},{"../package.json":73,"_process":9,"miniget":61}],73:[function(require,module,exports){
+},{"../package.json":72,"_process":9,"miniget":61}],72:[function(require,module,exports){
 module.exports={
   "_from": "ytdl-core@^4.4.3",
   "_id": "ytdl-core@4.4.3",

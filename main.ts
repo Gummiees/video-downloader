@@ -1,10 +1,21 @@
 import { Readable } from 'stream';
-import streamToBlob from 'stream-to-blob';
 import ytdl, { chooseFormatOptions, videoInfo } from 'ytdl-core';
 
-function downloadBlob(blob: Blob): string {
-  const blobUrl = URL.createObjectURL(blob);
-  return blobUrl;
+async function downloadBlob(reader: Readable): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const chunks: Uint8Array[] = [];
+    reader.on('data', (chunk: Uint8Array) => chunks.push(chunk))
+    .once('end', () => {
+      const blob: Blob = new Blob(chunks, {type: 'video/mp4'});
+      const blobUrl = URL.createObjectURL(blob);
+      console.log('blob url', blobUrl);
+      resolve(blobUrl);
+    })
+    .once('error', (err) => {
+      console.error('error', err);
+      reject();
+    });
+  })
 }
 
 function validateUrl(url: string): boolean {
@@ -19,9 +30,9 @@ async function downloadFromYoutube(url: string): Promise<[string, string]> {
   const info: videoInfo = await ytdl.getInfo(url);
   const formatOptions: chooseFormatOptions = { quality: 'highestvideo' };
   const stream: Readable = ytdl.downloadFromInfo(info, formatOptions);
-  const blob: Blob = await streamToBlob(stream, 'video/mp4');
   const fileName: string = `${info.videoDetails.title}.mp4`;
-  return [downloadBlob(blob), fileName];
+  const blobUrl: string = await downloadBlob(stream);
+  return [blobUrl, fileName];
 }
 
 chrome.runtime.onMessage.addListener((request) => {
